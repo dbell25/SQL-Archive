@@ -3,14 +3,14 @@ use WideWorldImporters
 select
 	s1.SupplierID,
 	s1.SupplierName,
-	count(s2.SupplierID) as [Order Count],
-	sum(ol.Quantity*ol.UnitPrice) as [Sales]
+	count(distinct o.OrderID) as [Order Count],
+	isnull(sum(ol.Quantity*ol.UnitPrice), 0.00) as [Sales]
 from
-	Purchasing.Suppliers s1 join Purchasing.SupplierTransactions st on s1.SupplierID=st.SupplierID
-	join Warehouse.StockItems si on s1.SupplierID=si.SupplierID
-	full outer join Purchasing.PurchaseOrders s2 on s2.SupplierID=s1.SupplierID
-	full outer join Sales.OrderLines ol on si.StockItemID=ol.StockItemID
+	Sales.OrderLines ol full outer join Warehouse.StockItems si on ol.StockItemID=si.StockItemID
+	right join Sales.Orders o on o.OrderID=ol.OrderID and o.OrderDate between '01/01/2015' and '12/31/2015'
+	right join Purchasing.Suppliers s1 on s1.SupplierID=si.SupplierID
+
 group by
 	s1.SupplierName, s1.SupplierID
 order by
-	[Sales] desc
+	[Sales] desc, s1.SupplierName
