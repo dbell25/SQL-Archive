@@ -13,4 +13,4 @@ from
 group by
 	s1.SupplierName, s1.SupplierID
 order by
-	[Sales] desc, s1.SupplierName
+	[Sales] desc, [Order Count], s1.SupplierName
