@@ -1,22 +1,21 @@
---Q2
+--Q3
 use WideWorldImporters
 
-select
-	s.SupplierID,
-	s.SupplierName,
-	c.CityName as [City],
-	sp.StateProvinceCode as [State],
-	s.PostalPostalCode as [Postal Code]
+select 
+	o.OrderID,
+	o.OrderDate,
+	sum(ol.Quantity*ol.UnitPrice) as [Order Total],
+	(
+		select datediff(day, max(o2.OrderDate), o.OrderDate)
+		from Sales.Orders o2
+		where o2.OrderDate < o.OrderDate and o2.CustomerID=90
+	) as [DaysSincePreviousOrder]
 from
-	Purchasing.Suppliers as s
-	join Purchasing.SupplierCategories as sc on s.SupplierCategoryID=sc.SupplierCategoryID
-	join Application.Cities as c on s.PostalCityID=c.CityID
-	join Application.StateProvinces as sp on c.StateProvinceID=sp.StateProvinceID
-where s.SupplierID in
-(
-	select s.SupplierID
-	from Warehouse.StockItems as si
-	where si.SupplierID=s.SupplierID
-	having count(si.SupplierID)=0
-) and sc.SupplierCategoryName = 'Novelty Goods Supplier'
-order by s.SupplierName
+	Sales.Orders o join Sales.OrderLines ol on o.OrderID=ol.OrderID
+where
+	o.CustomerID=90
+group by
+	o.OrderID,
+	o.OrderDate
+order by
+	o.OrderID

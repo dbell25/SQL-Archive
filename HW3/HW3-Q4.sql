@@ -1,15 +1,21 @@
 --Q4
+use WideWorldImporters
 select
 	c.CustomerID,
 	c.CustomerName,
-	count(distinct o.OrderID) as [Order Count],
-	sum(ol.Quantity*ol.UnitPrice) as [Sales]	
-from
-	Sales.Customers c join Sales.Orders o on c.CustomerID=o.CustomerID
-	join Sales.OrderLines ol on o.OrderID=ol.OrderID
-where
-	year(o.OrderDate)='2015'
-group by
-	c.CustomerID, c.CustomerName
+	[Sales].OrderCount,
+	[Sales].Sales
+from Sales.Customers as c
+    join
+    (
+        select 
+			o.CustomerID,
+			count(distinct o.OrderID) as [OrderCount],
+			sum(ol.Quantity * ol.UnitPrice) as [Sales]
+		from 
+			Sales.Orders as o join Sales.OrderLines as ol on o.OrderID = ol.OrderID and year(o.OrderDate) = 2015
+		group by
+			o.CustomerID
+    ) as [Sales] on c.CustomerID = [Sales].CustomerID
 order by
 	[Sales] desc, CustomerID
