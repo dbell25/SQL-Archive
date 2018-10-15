@@ -5,11 +5,11 @@ go
 use danieljbell;
 create table Homework4.Club
 (
-	ClubId int NOT NULL identity(1, 1) primary key,
+	ClubID int NOT NULL identity(1, 1) primary key,
 	ClubName nvarchar(100) Not Null,
 	Purpose nvarchar(150) Not Null,
-	CreatedOn datetimeoffset Not Null,
-	UpdatedOn datetimeoffset Not Null
+	CreatedOn datetimeoffset Not Null default(sysdatetime()),
+	UpdatedOn datetimeoffset Not Null default(sysdatetime())
 	unique
 	(
 		ClubName	
@@ -22,8 +22,8 @@ create table Homework4.Meeting
 	clubID int Not Null foreign key references Homework4.Club(ClubID),
 	Meet_Time datetime2(0) Not Null,
 	Meet_Location nvarchar(100) Not Null,
-	CreatedOn datetimeoffset Not Null,
-	UpdatedOn datetimeoffset Not Null
+	CreatedOn datetimeoffset Not Null default(sysdatetime()),
+	UpdatedOn datetimeoffset Not Null default(sysdatetime())
 	unique
 	(
 		clubID,
@@ -37,8 +37,8 @@ create table Homework4.Attendee
 	Email nvarchar(100) Not Null,
 	FirstName nvarchar(45) Not Null,
 	LastName nvarchar(45) Not Null,
-	CreatedOn datetimeoffset Not Null,
-	UpdatedOn datetimeoffset Not Null
+	CreatedOn datetimeoffset Not Null default(sysdatetime()),
+	UpdatedOn datetimeoffset Not Null default(sysdatetime())
 );
 
 create table Homework4.MeetingAttendee
